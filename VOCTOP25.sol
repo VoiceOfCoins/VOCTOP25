@@ -1,9 +1,10 @@
 pragma solidity ^0.4.18;
 
-//https://github.com/VoiceOfCoins/VOCTOP25
 
+contract Owned {
 
-contract owned {
+   /** GitHub Repository https://github.com/VoiceOfCoins/VOCTOP25
+    */
     
     address internal _owner;
     
@@ -12,7 +13,7 @@ contract owned {
      *
      * Initializes contract with owner
      */
-    function owned() public {
+    function Owned() public {
         
         _owner = msg.sender;
         
@@ -31,7 +32,7 @@ contract owned {
         
     }
     
-    function transferOwnership(address _newOwner) onlyOwner public {
+    function transferOwnership(address _newOwner) public onlyOwner {
         
         require(_newOwner != address(0));
         _owner = _newOwner;
@@ -40,7 +41,7 @@ contract owned {
 }
 
 
-contract VOCTOP25 is owned {
+contract VOCTOP25 is Owned {
     
     // Internal variables of the token
     string  internal _name;
@@ -85,38 +86,7 @@ contract VOCTOP25 is owned {
         _symbol = "VOC25";   
         
     }
-    
-    
-    /**
-     * Internal transfer, only can be called by this contract
-     */
-    function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
-        
-        // Prevent transfer to 0x0 address. Use burn() instead
-        require(_to != 0x0);
-        
-        //Check if FrozenFunds
-        require(!_frozenAccount[_from]);
-        
-        // Check if the sender has enough
-        require(_balanceOf[_from] >= _value);
-        
-        // Check for overflows
-        require(_balanceOf[_to] + _value >= _balanceOf[_to]);
-        
-        // Subtract from the sender
-        _balanceOf[_from] -= _value;
-        
-        // Add the same to the recipient
-        _balanceOf[_to] += _value;
-        
-		//Notify Listeners
-        Transfer(_from, _to, _value);    
-		
-        return true;
-        
-    }
-    
+      
     /**
      * Returns token's name
      *
@@ -167,7 +137,6 @@ contract VOCTOP25 is owned {
         
     }
     
-    
     /**
      * Transfer tokens
      *
@@ -178,9 +147,9 @@ contract VOCTOP25 is owned {
      */
     function transfer(address _to, uint256 _value) public returns (bool success) {
         
-		// Do actual transfer
+        //Do actual transfer
         _transfer(msg.sender, _to, _value);  
-		
+
         return true;
         
     }
@@ -202,9 +171,9 @@ contract VOCTOP25 is owned {
             _allowance[_from][msg.sender] -= _value;
         }
         
-		// Do actual transfer
+        // Do actual transfer
         _transfer(_from, _to, _value); 
-		
+
         return true;
     }
     
@@ -223,12 +192,12 @@ contract VOCTOP25 is owned {
      */
     function approve(address _spender, uint256 _value) public returns (bool success) {
         
-		//set value 
+        //set value 
         _allowance[msg.sender][_spender] = _value;
-		
-		//Notify Listeners
+
+        //Notify Listeners
         Approval(msg.sender, _spender, _value);
-		
+
         return true;
         
     }
@@ -252,39 +221,38 @@ contract VOCTOP25 is owned {
    */
     function increaseApproval(address _spender, uint256 _addedValue) public returns (bool) {
       
-		//check overflow
+        //check overflow
         require(_allowance[msg.sender][_spender] + _addedValue >= _allowance[msg.sender][_spender]);
-		
-		//upate value
+
+        //upate value
         _allowance[msg.sender][_spender] += _addedValue;
-		
-		//Notify Listeners
+
+        //Notify Listeners
         Approval(msg.sender, _spender, _allowance[msg.sender][_spender]);
-		
+
         return true;
     }
 
     function decreaseApproval(address _spender, uint256 _subtractedValue) public returns (bool) {
     
-		//check if subtractedValue greater than available, if so set to zero
-		//otherwise decrease by subtractedValue
+        //check if subtractedValue greater than available, if so set to zero
+        //otherwise decrease by subtractedValue
         if (_subtractedValue > _allowance[msg.sender][_spender]) {
-			
+
             _allowance[msg.sender][_spender] = 0;
-			
+
         } else {
-			
+
             _allowance[msg.sender][_spender] -= _subtractedValue;
-			
+
         }
-		
-		//Notify Listeners
+
+        //Notify Listeners
         Approval(msg.sender, _spender, _allowance[msg.sender][_spender]);
-		
+
         return true;
     }
     
-
     /**
      * @notice Destroy tokens from owener account, can be run only by owner
      *
@@ -292,7 +260,7 @@ contract VOCTOP25 is owned {
      *
      * @param _value the amount of money to burn
      */
-    function burn(uint256 _value) onlyOwner public returns (bool success) {
+    function burn(uint256 _value) public onlyOwner returns (bool success) {
         
         // Check if the targeted balance is enough
         require(_balanceOf[_owner] >= _value);
@@ -301,7 +269,7 @@ contract VOCTOP25 is owned {
         _balanceOf[_owner] -= _value;
         _totalSupply -= _value;
         
-		//Notify Listeners
+        //Notify Listeners
         Burn(_owner, _value);
         
         return true;
@@ -316,7 +284,7 @@ contract VOCTOP25 is owned {
      * @param _from the address of the sender
      * @param _value the amount of money to burn
      */
-    function burnFrom(address _from, uint256 _value) onlyOwner public returns (bool success) {
+    function burnFrom(address _from, uint256 _value) public onlyOwner returns (bool success) {
         
         // Save frozen state
         bool bAccountFrozen = frozenAccount(_from);
@@ -324,7 +292,7 @@ contract VOCTOP25 is owned {
         //Unfreeze account if was frozen
         if (bAccountFrozen) {
             //Allow transfers
-            freezeAccount(_from,false);
+            freezeAccount(_from, false);
         }
         
         // Transfer to owners account
@@ -332,7 +300,7 @@ contract VOCTOP25 is owned {
         
         //Freeze again if was frozen before
         if (bAccountFrozen) {
-            freezeAccount(_from,bAccountFrozen);
+            freezeAccount(_from, bAccountFrozen);
         }
         
         // Burn from owners account
@@ -346,7 +314,7 @@ contract VOCTOP25 is owned {
     * @notice Create `mintedAmount` tokens and send it to `owner`, can be run only by owner
     * @param mintedAmount the amount of tokens it will receive
     */
-    function mintToken(uint256 mintedAmount) onlyOwner public {
+    function mintToken(uint256 mintedAmount) public onlyOwner {
         
         // Check for overflows
         require(_balanceOf[_owner] + mintedAmount >= _balanceOf[_owner]);
@@ -357,7 +325,7 @@ contract VOCTOP25 is owned {
         _balanceOf[_owner] += mintedAmount;
         _totalSupply += mintedAmount;
         
-		//Notify Listeners
+        //Notify Listeners
         Transfer(0, _owner, mintedAmount);
         
     }
@@ -367,12 +335,12 @@ contract VOCTOP25 is owned {
     * @param target Account
     * @param freeze True to freeze, False to unfreeze
     */
-    function freezeAccount (address target, bool freeze) onlyOwner public {
+    function freezeAccount (address target, bool freeze) public onlyOwner {
         
-		//set freeze value 
+        //set freeze value 
         _frozenAccount[target] = freeze;
-		
-		//Notify Listeners
+
+        //Notify Listeners
         FrozenFunds(target, freeze);
         
     }
@@ -384,6 +352,36 @@ contract VOCTOP25 is owned {
     function frozenAccount(address _account) public view returns (bool) {
         
         return _frozenAccount[_account];
+        
+    }
+
+    /**
+     * Internal transfer, only can be called by this contract
+     */
+    function _transfer(address _from, address _to, uint256 _value) internal returns (bool success) {
+        
+        // Prevent transfer to 0x0 address. Use burn() instead
+        require(_to != 0x0);
+        
+        //Check if FrozenFunds
+        require(!_frozenAccount[_from]);
+        
+        // Check if the sender has enough
+        require(_balanceOf[_from] >= _value);
+        
+        // Check for overflows
+        require(_balanceOf[_to] + _value >= _balanceOf[_to]);
+        
+        // Subtract from the sender
+        _balanceOf[_from] -= _value;
+        
+        // Add the same to the recipient
+        _balanceOf[_to] += _value;
+        
+        //Notify Listeners
+        Transfer(_from, _to, _value);    
+
+        return true;
         
     }
     
