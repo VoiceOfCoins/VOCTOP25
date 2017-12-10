@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Exit script as soon as a command fails.
-set -o errexit
+#set -o errexit
 
 # We define 10 accounts with balance 1M ether, needed for high-value tests.
 accounts=(
