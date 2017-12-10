@@ -10,5 +10,6 @@ cache:
 before_script:
   - truffle version
 script:
-  - truffle test
+  - npm run lint
+  - npm run test
 
