@@ -57,13 +57,13 @@ contract VOCTOP25 is Owned {
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed _from, address indexed _to, uint _value);
     // This notifies clients about the amount minted
-	event Mint(address indexed _to, uint256 _value);
+    event Mint(address indexed _to, uint256 _value);
     // This notifies clients about the amount burnt
     event Burn(address indexed _from, uint256 _value);
     // This notifies clients about approval for other address
     event Approval(address indexed _owner, address indexed _spender, uint _value);
-	// This notifies clients frozen accounts
-	event AccountFrozen(address indexed _account, bool _value);
+    // This notifies clients frozen accounts
+    event AccountFrozen(address indexed _account, bool _value);
        
     /**
      * Constrctor function
@@ -349,9 +349,9 @@ contract VOCTOP25 is Owned {
         
         //set freeze value 
         _frozenAccount[_target] = _freeze;
-		
-		
-		//Notify Listeners
+        
+        
+        //Notify Listeners
         AccountFrozen(_target, _freeze);
         
         return true;
@@ -377,7 +377,7 @@ contract VOCTOP25 is Owned {
         
         //Check if FrozenFunds
         require(!_frozenAccount[_from]);
-		require(!_frozenAccount[_to]);
+        require(!_frozenAccount[_to]);
         
         // Check if the sender has enough
         require(_balanceOf[_from] >= _value);
@@ -390,7 +390,7 @@ contract VOCTOP25 is Owned {
         
         // Add the same to the recipient
         _balanceOf[_to] += _value;
-        	
+            
         //Notify Listeners
         Transfer(_from, _to, _value);    
 
