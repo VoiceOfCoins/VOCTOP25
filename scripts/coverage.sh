@@ -17,7 +17,7 @@ accounts=(
     --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209,1000000000000000000000000"
 )
   
-node_modules/.bin/ganache-cli --gasLimit 0xfffffffffffffffff --gasPrice 0x01 --port 8555 "${accounts[@]}" > /dev/null &
+node_modules/.bin/ganache-cli --gasLimit 0xfffffffffff --gasPrice 0x01 --port 8555 "${accounts[@]}" > /dev/null &
 
 node_modules/.bin/solidity-coverage
   
