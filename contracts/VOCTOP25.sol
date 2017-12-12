@@ -150,9 +150,9 @@ contract VOCTOP25 is Owned {
     function transfer(address _to, uint256 _value) public returns (bool success) {
         
         //Do actual transfer
-        _transfer(msg.sender, _to, _value);  
+        bool transferResult = _transfer(msg.sender, _to, _value);  
 
-        return true;
+        return transferResult;
         
     }
     
@@ -174,9 +174,9 @@ contract VOCTOP25 is Owned {
         }
         
         // Do actual transfer
-        _transfer(_from, _to, _value); 
+        bool transferResult = _transfer(_from, _to, _value); 
 
-        return true;
+        return transferResult;
     }
     
     /**
